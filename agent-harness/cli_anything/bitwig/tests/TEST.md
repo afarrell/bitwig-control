@@ -120,7 +120,17 @@
 
 ---
 
-## Test Results
+## Test Results (without Bitwig running)
+
+```
+CLI_ANYTHING_FORCE_INSTALLED=1 pytest cli_anything/bitwig/tests/ -v --tb=no
+
+============================= test session starts ==============================
+71 passed, 11 skipped in 2.90s
+======================== (skipped tests require running Bitwig) ================
+```
+
+## Test Results (with Bitwig Studio + DrivenByMoss OSC — 2026-03-14)
 
 ```
 CLI_ANYTHING_FORCE_INSTALLED=1 pytest cli_anything/bitwig/tests/ -v --tb=no
@@ -195,34 +205,34 @@ test_core.py::TestProjectValidation::test_save_sends_osc PASSED
 test_core.py::TestProjectValidation::test_undo_sends_osc PASSED
 test_core.py::TestProjectValidation::test_redo_sends_osc PASSED
 test_core.py::TestProjectValidation::test_status_returns_fields PASSED
-test_full_e2e.py::TestConnection::test_connect_and_disconnect SKIPPED (Bitwig not running)
-test_full_e2e.py::TestConnection::test_double_connect SKIPPED
-test_full_e2e.py::TestTransportE2E::test_transport_status SKIPPED
-test_full_e2e.py::TestTransportE2E::test_set_tempo SKIPPED
-test_full_e2e.py::TestTracksE2E::test_list_tracks SKIPPED
-test_full_e2e.py::TestMixerE2E::test_mixer_status SKIPPED
+test_full_e2e.py::TestConnection::test_connect_and_disconnect PASSED
+test_full_e2e.py::TestConnection::test_double_connect PASSED
+test_full_e2e.py::TestTransportE2E::test_transport_status PASSED
+test_full_e2e.py::TestTransportE2E::test_set_tempo PASSED
+test_full_e2e.py::TestTracksE2E::test_list_tracks PASSED
+test_full_e2e.py::TestMixerE2E::test_mixer_status PASSED
 test_full_e2e.py::TestCLISubprocess::test_help PASSED
 test_full_e2e.py::TestCLISubprocess::test_transport_help PASSED
 test_full_e2e.py::TestCLISubprocess::test_track_help PASSED
 test_full_e2e.py::TestCLISubprocess::test_clip_help PASSED
 test_full_e2e.py::TestCLISubprocess::test_device_help PASSED
 test_full_e2e.py::TestCLISubprocess::test_mixer_help PASSED
-test_full_e2e.py::TestCLISubprocessE2E::test_json_connect_and_status SKIPPED
-test_full_e2e.py::TestCLISubprocessE2E::test_json_transport_status SKIPPED
-test_full_e2e.py::TestCLISubprocessE2E::test_json_track_list SKIPPED
-test_full_e2e.py::TestCLISubprocessE2E::test_json_mixer_status SKIPPED
-test_full_e2e.py::TestCLISubprocessE2E::test_full_workflow SKIPPED
+test_full_e2e.py::TestCLISubprocessE2E::test_json_connect_and_status PASSED
+test_full_e2e.py::TestCLISubprocessE2E::test_json_transport_status PASSED
+test_full_e2e.py::TestCLISubprocessE2E::test_json_track_list PASSED
+test_full_e2e.py::TestCLISubprocessE2E::test_json_mixer_status PASSED
+test_full_e2e.py::TestCLISubprocessE2E::test_full_workflow PASSED
 
-======================== 71 passed, 11 skipped in 2.90s ========================
+============================== 82 passed in 3.10s ==============================
 ```
 
 ### Summary
 
 - **Total tests:** 82
-- **Passed:** 71 (100% of runnable tests)
-- **Skipped:** 11 (require running Bitwig Studio with DrivenByMoss)
+- **Passed:** 82 (100%)
+- **Skipped:** 0
 - **Failed:** 0
-- **Execution time:** 2.90s
+- **Execution time:** 3.10s
 - **Subprocess tests:** confirmed using installed command via `[_resolve_cli]`
 
 ### Coverage Notes
@@ -232,4 +242,5 @@ test_full_e2e.py::TestCLISubprocessE2E::test_full_workflow SKIPPED
 - State cache operations tested (thread safety, deep copy, nested access)
 - Session lifecycle tested (config save/load, connection status)
 - CLI subprocess tests confirm installed binary works (`--help` for all groups)
-- E2E tests require running Bitwig — to run them, start Bitwig with DrivenByMoss OSC configured
+- E2E tests confirm live bidirectional OSC communication with Bitwig Studio
+- Full workflow test: connect -> transport status -> track list -> mixer status -> disconnect

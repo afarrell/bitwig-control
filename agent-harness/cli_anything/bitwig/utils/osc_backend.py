@@ -337,47 +337,51 @@ class OscBitwigClient:
 
     # ── Handler methods ────────────────────────────────────────────
 
-    def _h_transport_bool(self, address, *args):
-        key = args[0]  # handler data
-        val = bool(args[1]) if len(args) > 1 else False
+    # python-osc dispatcher.map() passes extra args as a list in the second
+    # parameter (fixed_args), followed by the actual OSC message values.
+    # Signature: handler(address, fixed_args: list, *osc_values)
+
+    def _h_transport_bool(self, address, fixed_args, *osc_args):
+        key = fixed_args[0]
+        val = bool(osc_args[0]) if osc_args else False
         self.state.set("transport", key, val)
 
-    def _h_transport_float(self, address, *args):
-        key = args[0]
-        val = float(args[1]) if len(args) > 1 else 0.0
+    def _h_transport_float(self, address, fixed_args, *osc_args):
+        key = fixed_args[0]
+        val = float(osc_args[0]) if osc_args else 0.0
         self.state.set("transport", key, val)
 
-    def _h_transport_int(self, address, *args):
-        key = args[0]
-        val = int(args[1]) if len(args) > 1 else 0
+    def _h_transport_int(self, address, fixed_args, *osc_args):
+        key = fixed_args[0]
+        val = int(osc_args[0]) if osc_args else 0
         self.state.set("transport", key, val)
 
-    def _h_transport_str(self, address, *args):
-        key = args[0]
-        val = str(args[1]) if len(args) > 1 else ""
+    def _h_transport_str(self, address, fixed_args, *osc_args):
+        key = fixed_args[0]
+        val = str(osc_args[0]) if osc_args else ""
         self.state.set("transport", key, val)
 
-    def _h_track_str(self, address, *args):
-        track_num, key = args[0], args[1]
-        val = str(args[2]) if len(args) > 2 else ""
+    def _h_track_str(self, address, fixed_args, *osc_args):
+        track_num, key = fixed_args[0], fixed_args[1]
+        val = str(osc_args[0]) if osc_args else ""
         self._ensure_track(track_num)
         self.state.set("tracks", track_num, key, val)
 
-    def _h_track_float(self, address, *args):
-        track_num, key = args[0], args[1]
-        val = float(args[2]) if len(args) > 2 else 0.0
+    def _h_track_float(self, address, fixed_args, *osc_args):
+        track_num, key = fixed_args[0], fixed_args[1]
+        val = float(osc_args[0]) if osc_args else 0.0
         self._ensure_track(track_num)
         self.state.set("tracks", track_num, key, val)
 
-    def _h_track_bool(self, address, *args):
-        track_num, key = args[0], args[1]
-        val = bool(args[2]) if len(args) > 2 else False
+    def _h_track_bool(self, address, fixed_args, *osc_args):
+        track_num, key = fixed_args[0], fixed_args[1]
+        val = bool(osc_args[0]) if osc_args else False
         self._ensure_track(track_num)
         self.state.set("tracks", track_num, key, val)
 
-    def _h_track_send_float(self, address, *args):
-        track_num, send_num, key = args[0], args[1], args[2]
-        val = float(args[3]) if len(args) > 3 else 0.0
+    def _h_track_send_float(self, address, fixed_args, *osc_args):
+        track_num, send_num, key = fixed_args[0], fixed_args[1], fixed_args[2]
+        val = float(osc_args[0]) if osc_args else 0.0
         self._ensure_track(track_num)
         sends = self.state.get("tracks", track_num, "sends") or {}
         if send_num not in sends:
@@ -385,9 +389,9 @@ class OscBitwigClient:
         sends[send_num][key] = val
         self.state.set("tracks", track_num, "sends", sends)
 
-    def _h_track_send_str(self, address, *args):
-        track_num, send_num, key = args[0], args[1], args[2]
-        val = str(args[3]) if len(args) > 3 else ""
+    def _h_track_send_str(self, address, fixed_args, *osc_args):
+        track_num, send_num, key = fixed_args[0], fixed_args[1], fixed_args[2]
+        val = str(osc_args[0]) if osc_args else ""
         self._ensure_track(track_num)
         sends = self.state.get("tracks", track_num, "sends") or {}
         if send_num not in sends:
@@ -395,89 +399,89 @@ class OscBitwigClient:
         sends[send_num][key] = val
         self.state.set("tracks", track_num, "sends", sends)
 
-    def _h_clip_str(self, address, *args):
-        track_num, clip_num, key = args[0], args[1], args[2]
-        val = str(args[3]) if len(args) > 3 else ""
+    def _h_clip_str(self, address, fixed_args, *osc_args):
+        track_num, clip_num, key = fixed_args[0], fixed_args[1], fixed_args[2]
+        val = str(osc_args[0]) if osc_args else ""
         self._ensure_clip(track_num, clip_num)
         self.state.set("tracks", track_num, "clips", clip_num, key, val)
 
-    def _h_clip_bool(self, address, *args):
-        track_num, clip_num, key = args[0], args[1], args[2]
-        val = bool(args[3]) if len(args) > 3 else False
+    def _h_clip_bool(self, address, fixed_args, *osc_args):
+        track_num, clip_num, key = fixed_args[0], fixed_args[1], fixed_args[2]
+        val = bool(osc_args[0]) if osc_args else False
         self._ensure_clip(track_num, clip_num)
         self.state.set("tracks", track_num, "clips", clip_num, key, val)
 
-    def _h_master_float(self, address, *args):
-        key = args[0]
-        val = float(args[1]) if len(args) > 1 else 0.0
+    def _h_master_float(self, address, fixed_args, *osc_args):
+        key = fixed_args[0]
+        val = float(osc_args[0]) if osc_args else 0.0
         self.state.set("master", key, val)
 
-    def _h_master_str(self, address, *args):
-        key = args[0]
-        val = str(args[1]) if len(args) > 1 else ""
+    def _h_master_str(self, address, fixed_args, *osc_args):
+        key = fixed_args[0]
+        val = str(osc_args[0]) if osc_args else ""
         self.state.set("master", key, val)
 
-    def _h_master_bool(self, address, *args):
-        key = args[0]
-        val = bool(args[1]) if len(args) > 1 else False
+    def _h_master_bool(self, address, fixed_args, *osc_args):
+        key = fixed_args[0]
+        val = bool(osc_args[0]) if osc_args else False
         self.state.set("master", key, val)
 
-    def _h_scene_str(self, address, *args):
-        scene_num, key = args[0], args[1]
-        val = str(args[2]) if len(args) > 2 else ""
+    def _h_scene_str(self, address, fixed_args, *osc_args):
+        scene_num, key = fixed_args[0], fixed_args[1]
+        val = str(osc_args[0]) if osc_args else ""
         self._ensure_scene(scene_num)
         self.state.set("scenes", scene_num, key, val)
 
-    def _h_scene_bool(self, address, *args):
-        scene_num, key = args[0], args[1]
-        val = bool(args[2]) if len(args) > 2 else False
+    def _h_scene_bool(self, address, fixed_args, *osc_args):
+        scene_num, key = fixed_args[0], fixed_args[1]
+        val = bool(osc_args[0]) if osc_args else False
         self._ensure_scene(scene_num)
         self.state.set("scenes", scene_num, key, val)
 
-    def _h_device_str(self, address, *args):
-        key = args[0]
-        val = str(args[1]) if len(args) > 1 else ""
+    def _h_device_str(self, address, fixed_args, *osc_args):
+        key = fixed_args[0]
+        val = str(osc_args[0]) if osc_args else ""
         self.state.set("device", key, val)
 
-    def _h_device_bool(self, address, *args):
-        key = args[0]
-        val = bool(args[1]) if len(args) > 1 else False
+    def _h_device_bool(self, address, fixed_args, *osc_args):
+        key = fixed_args[0]
+        val = bool(osc_args[0]) if osc_args else False
         self.state.set("device", key, val)
 
-    def _h_device_param_str(self, address, *args):
-        param_num, key = args[0], args[1]
-        val = str(args[2]) if len(args) > 2 else ""
+    def _h_device_param_str(self, address, fixed_args, *osc_args):
+        param_num, key = fixed_args[0], fixed_args[1]
+        val = str(osc_args[0]) if osc_args else ""
         params = self.state.get("device", "params") or {}
         if param_num not in params:
             params[param_num] = {}
         params[param_num][key] = val
         self.state.set("device", "params", params)
 
-    def _h_device_param_float(self, address, *args):
-        param_num, key = args[0], args[1]
-        val = float(args[2]) if len(args) > 2 else 0.0
+    def _h_device_param_float(self, address, fixed_args, *osc_args):
+        param_num, key = fixed_args[0], fixed_args[1]
+        val = float(osc_args[0]) if osc_args else 0.0
         params = self.state.get("device", "params") or {}
         if param_num not in params:
             params[param_num] = {}
         params[param_num][key] = val
         self.state.set("device", "params", params)
 
-    def _h_device_param_bool(self, address, *args):
-        param_num, key = args[0], args[1]
-        val = bool(args[2]) if len(args) > 2 else False
+    def _h_device_param_bool(self, address, fixed_args, *osc_args):
+        param_num, key = fixed_args[0], fixed_args[1]
+        val = bool(osc_args[0]) if osc_args else False
         params = self.state.get("device", "params") or {}
         if param_num not in params:
             params[param_num] = {}
         params[param_num][key] = val
         self.state.set("device", "params", params)
 
-    def _h_simple_set(self, address, *args):
-        section, key = args[0], args[1]
-        val = args[2] if len(args) > 2 else None
+    def _h_simple_set(self, address, fixed_args, *osc_args):
+        section, key = fixed_args[0], fixed_args[1]
+        val = osc_args[0] if osc_args else None
         self.state.set(section, key, val)
 
-    def _h_layout(self, address, *args):
-        val = str(args[0]) if args else "arrange"
+    def _h_layout(self, address, fixed_args, *osc_args):
+        val = str(osc_args[0]) if osc_args else "arrange"
         self.state.set("layout", val)
 
     def _h_default(self, address, *args):

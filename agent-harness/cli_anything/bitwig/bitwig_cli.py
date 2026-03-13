@@ -28,6 +28,14 @@ def get_session() -> Session:
     return _session
 
 
+def get_connected_session(timeout: float = 3.0) -> Session:
+    """Get session, auto-connecting if needed. For one-shot CLI commands."""
+    sess = get_session()
+    if not sess.connected:
+        sess.connect(timeout=timeout)
+    return sess
+
+
 # ── Output helpers ─────────────────────────────────────────────────────
 
 def output(data: dict, message: str = ""):
@@ -117,6 +125,13 @@ def cli(ctx, use_json, host, send_port, receive_port):
 
     if ctx.invoked_subcommand is None:
         ctx.invoke(repl)
+    elif ctx.invoked_subcommand not in ("connect", "disconnect", "status", "repl"):
+        # Auto-connect for commands that need a live session
+        if not sess.connected:
+            try:
+                sess.connect(timeout=3.0)
+            except Exception:
+                pass  # Let the command itself handle the error
 
 
 # ── Connect command ────────────────────────────────────────────────────

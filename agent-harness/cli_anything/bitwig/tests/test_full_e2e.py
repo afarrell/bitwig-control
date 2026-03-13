@@ -25,7 +25,7 @@ def _bitwig_available():
     """
     try:
         from cli_anything.bitwig.utils.osc_backend import OscBitwigClient
-        client = OscBitwigClient(receive_port=19123)  # Use unusual port to avoid conflicts
+        client = OscBitwigClient(receive_port=9000)
         result = client.connect(timeout=2.0)
         client.disconnect()
         return result.get("state_received", False)
