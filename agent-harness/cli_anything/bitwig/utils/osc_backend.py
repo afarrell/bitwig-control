@@ -176,6 +176,13 @@ class OscBitwigClient:
         while time.time() < deadline:
             if self.state.last_update > 0:
                 self._connected = True
+                # Let the full state settle — DrivenByMoss sends hundreds
+                # of messages after /refresh; wait until updates stop arriving
+                while time.time() < deadline:
+                    last = self.state.last_update
+                    time.sleep(0.15)
+                    if self.state.last_update == last:
+                        break  # No new updates for 150ms — state is settled
                 break
             time.sleep(0.05)
 
